@@ -6,6 +6,12 @@ when you're connected to in-flight Wi-Fi.
 > **Note:** this project was written almost entirely by an AI coding agent
 > (Claude). Treat the code accordingly — read before you trust it.
 
+## Supported airlines
+
+- **Delta Air Lines** — any SSID containing `deltawifi`
+
+Want another carrier? See [Adding another airline](#adding-another-airline) below — it's one file.
+
 ## Features
 
 - Lives in the menu bar; no Dock icon.
