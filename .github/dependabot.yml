@@ -1,0 +1,10 @@
+version: 2
+updates:
+  # Airwatch currently has no Swift package dependencies, so the only
+  # ecosystem worth tracking is the GitHub Actions we pin in workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
