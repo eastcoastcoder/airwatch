@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. v0.1.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build Airwatch.app
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project Airwatch.xcodeproj \
+            -scheme Airwatch \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Locate app bundle
+        id: locate
+        run: |
+          APP_PATH="$(find build/Build/Products/Release -maxdepth 2 -name 'Airwatch.app' -print -quit)"
+          if [ -z "$APP_PATH" ]; then
+            echo "Airwatch.app not found"; exit 1
+          fi
+          echo "app_path=$APP_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Ad-hoc sign
+        run: codesign --force --deep --sign - "${{ steps.locate.outputs.app_path }}"
+
+      - name: Zip app bundle
+        id: zip
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME:-${{ github.event.inputs.tag }}}"
+          ZIP_NAME="Airwatch-${TAG}.zip"
+          ditto -c -k --sequesterRsrc --keepParent "${{ steps.locate.outputs.app_path }}" "$ZIP_NAME"
+          echo "zip_name=$ZIP_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name || github.event.inputs.tag }}
+          name: ${{ github.ref_name || github.event.inputs.tag }}
+          generate_release_notes: true
+          files: ${{ steps.zip.outputs.zip_name }}
