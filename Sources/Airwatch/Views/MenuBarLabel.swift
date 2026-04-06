@@ -33,6 +33,8 @@ struct MenuBarLabel: View {
         case .notOnFlightWiFi:
             Image(systemName: "airplane")
                 .opacity(0.4)
+        case .locationDenied:
+            Image(systemName: "location.slash")
         }
     }
 

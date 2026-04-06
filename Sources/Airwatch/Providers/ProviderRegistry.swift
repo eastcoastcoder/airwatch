@@ -6,7 +6,8 @@ struct ProviderRegistry {
     let providers: [AirlineProvider]
 
     static let `default` = ProviderRegistry(providers: [
-        DeltaProvider()
+        DeltaProvider(),
+        AirFranceProvider(),
         // Future: UnitedProvider(), AmericanProvider(), SouthwestProvider(), ...
     ])
 

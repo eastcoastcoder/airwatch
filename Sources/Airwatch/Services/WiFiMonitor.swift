@@ -22,6 +22,17 @@ final class WiFiMonitor: NSObject, CLLocationManagerDelegate {
         locationManager.delegate = self
     }
 
+    /// Whether the user has granted (or not yet been asked) location permission.
+    /// Returns false only when explicitly denied or restricted.
+    var hasLocationPermission: Bool {
+        switch locationManager.authorizationStatus {
+        case .denied, .restricted:
+            return false
+        default:
+            return true
+        }
+    }
+
     func currentSSID() -> String? {
         ensureLocationAuthorization()
         return CWWiFiClient.shared().interface()?.ssid()

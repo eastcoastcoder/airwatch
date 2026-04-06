@@ -46,6 +46,20 @@ struct FlightPopoverView: View {
             Text("Connecting to \(airline)…").font(.headline)
         case .notOnFlightWiFi:
             Text("Not on in-flight Wi-Fi").font(.headline)
+        case .locationDenied:
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Location Permission Required").font(.headline)
+                Text("Airwatch needs Location access to read the Wi-Fi network name.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button("Open Settings") {
+                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+                .buttonStyle(.borderless)
+                .padding(.top, 2)
+            }
         case .error(let msg):
             Text("Error: \(msg)").font(.headline).foregroundStyle(.red)
         }

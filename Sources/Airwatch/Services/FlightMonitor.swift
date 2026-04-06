@@ -10,6 +10,7 @@ import Combine
 final class FlightMonitor: ObservableObject {
     enum State: Equatable {
         case notOnFlightWiFi
+        case locationDenied
         case connecting(airline: String)
         case connected(FlightSnapshot)
         case error(String)
@@ -54,6 +55,11 @@ final class FlightMonitor: ObservableObject {
     }
 
     private func tick() async {
+        guard wifi.hasLocationPermission else {
+            state = .locationDenied
+            return
+        }
+
         let ssid = wifi.currentSSID()
         guard let provider = registry.provider(forSSID: ssid) else {
             state = .notOnFlightWiFi
