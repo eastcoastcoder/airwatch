@@ -8,7 +8,8 @@ struct ProviderRegistry {
     static let `default` = ProviderRegistry(providers: [
         DeltaProvider(),
         AirFranceProvider(),
-        // Future: UnitedProvider(), AmericanProvider(), SouthwestProvider(), ...
+        AmericanProvider(),
+        // Future: UnitedProvider(), SouthwestProvider(), ...
     ])
 
     /// First provider whose `matches(ssid:)` returns true, or nil if the
